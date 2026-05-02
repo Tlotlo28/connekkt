@@ -13,21 +13,7 @@
   overflow: hidden;
 }
 
-/* --- Subtle animated grid in the background --- */
-.grid-bg {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-  animation: grid-drift 20s linear infinite;
-}
 
-@keyframes grid-drift {
-  from { transform: translate(0, 0); }
-  to   { transform: translate(60px, 60px); }
-}
 
 /* --- Floating shapes --- */
 .shapes { position: absolute; inset: 0; pointer-events: none; }
