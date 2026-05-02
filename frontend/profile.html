@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <title>Connekkt — Profile</title>
+  <link rel="icon" type="image/png" href="assets/connekkt-logo.png" />
+  <!-- Same Google Fonts as home + splash for consistency -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/profile.css" />
+</head>
+<body class="profile-body">
+
+  <main class="profile" id="profile">
+
+    <!-- Top bar -->
+    <header class="profile__top-bar">
+      <button class="icon-btn" id="backBtn" aria-label="Go back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+      <span class="profile__top-bar-label">PROFILE</span>
+      <button class="icon-btn" id="topRightBtn" aria-label="More options">
+        <!-- Icon swapped in JS: pencil if isMe, dots otherwise -->
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="topRightIcon">
+          <circle cx="12" cy="5" r="1.5"/>
+          <circle cx="12" cy="12" r="1.5"/>
+          <circle cx="12" cy="19" r="1.5"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Vertical photo carousel -->
+    <section class="profile__media" id="media">
+      <div class="photo-stack" id="photoStack"></div>
+
+      <!-- Black overlay so text stays readable over any photo (mobile only) -->
+      <div class="media-overlay" aria-hidden="true"></div>
+
+      <!-- Fade color band — FIXED to viewport, not scrollable -->
+      <div class="media-fade" id="mediaFade" aria-hidden="true"></div>
+
+      <!-- Scroll-down indicator with arrow (shows only when there's more below) -->
+      <div class="scroll-hint" id="scrollHint" aria-hidden="true">
+        <span class="scroll-hint__label">SCROLL</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <polyline points="19 12 12 19 5 12"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Right-side action column -->
+    <aside class="profile__actions">
+      <div class="actions__followers">
+        <span class="actions__count" id="followerCount">—</span>
+        <span class="actions__label">FOLLOWERS</span>
+      </div>
+
+      <button class="action-icon like-btn" id="likeBtn" aria-label="Like (coming soon)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+        </svg>
+        <span class="like-btn__shimmer" aria-hidden="true"></span>
+      </button>
+
+        <button class="action-icon" id="contactBtn" aria-label="View contact info">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+    </svg>
+    </button>
+
+      <button class="action-icon" aria-label="Send message">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+      </button>
+
+      <button class="action-icon connekkt-btn" aria-label="Connekkt with this creative">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+          <circle cx="8.5" cy="7" r="4"/>
+          <line x1="20" y1="8" x2="20" y2="14"/>
+          <line x1="23" y1="11" x2="17" y2="11"/>
+        </svg>
+      </button>
+    </aside>
+
+    <!-- Bottom info -->
+    <footer class="profile__info">
+      <h1 class="profile__name" id="creativeName">—</h1>
+      <p class="profile__field" id="creativeField">—</p>
+      <p class="profile__bio" id="creativeBio">—</p>
+
+      <div class="dna-tags" id="dnaTags"></div>
+      <div class="socials" id="socials"></div>
+
+      <!-- Fade color picker — only rendered when isMe -->
+      <button class="fade-color-btn" id="fadeColorBtn" aria-label="Change fade color" hidden>
+        <span class="fade-color-btn__swatch" id="fadeSwatch"></span>
+        <span>Fade color</span>
+      </button>
+    </footer>
+  </main>
+
+    <!-- Contact info modal -->
+<div class="modal" id="contactModal" aria-hidden="true" role="dialog" aria-labelledby="contactModalTitle">
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__panel">
+    <h3 class="modal__title" id="contactModalTitle">Get in touch</h3>
+    <p class="modal__subtitle" id="contactModalSubtitle">—</p>
+
+    <div class="contact-list" id="contactList"></div>
+
+    <div class="modal__actions">
+      <button class="btn btn--ghost" data-close-modal>Close</button>
+    </div>
+  </div>
+</div>
+
+
+  <script src="js/categories.js"></script>
+  <script src="js/mock-data.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

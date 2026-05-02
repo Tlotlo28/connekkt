@@ -9,6 +9,10 @@
 
   <!-- Leaflet CSS (the map library) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Our styles -->
   <link rel="stylesheet" href="css/tokens.css" />
@@ -23,19 +27,24 @@
     </div>
 
     <button class="icon-btn filter-btn" aria-label="Open filters" id="filterBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="4" y1="6" x2="20" y2="6"/>
-        <line x1="7" y1="12" x2="17" y2="12"/>
-        <line x1="10" y1="18" x2="14" y2="18"/>
-      </svg>
-    </button>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="4" y1="6" x2="20" y2="6"/>
+    <line x1="7" y1="12" x2="17" y2="12"/>
+    <line x1="10" y1="18" x2="14" y2="18"/>
+  </svg>
+</button>
 
-    <button class="icon-btn profile-btn" aria-label="Open profile" id="profileBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="8" r="4"/>
-        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
-      </svg>
-    </button>
+<button class="icon-btn legend-btn" aria-label="Open legend" id="legendBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M12 16v-4M12 8h.01"/>
+  </svg>
+</button>
+
+<button class="icon-btn profile-btn" aria-label="Open profile" id="profileBtn">
+  <!-- Avatar fills this, falls back to default icon if no photo -->
+  <span class="profile-btn__avatar" id="profileAvatar" aria-hidden="true"></span>
+</button>
   </header>
 
   <!-- The map -->
@@ -85,6 +94,19 @@
       </div>
     </div>
   </div>
+
+  <!-- Legend modal — shows what each shape and color means -->
+<div class="modal" id="legendModal" aria-hidden="true" role="dialog">
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__panel modal__panel--wide">
+    <h3 class="modal__title">The key</h3>
+    <p class="modal__subtitle">Every creative field has its own shape and color. Here's how to read the map.</p>
+    <div class="legend-grid" id="legendGrid"></div>
+    <div class="modal__actions">
+      <button class="btn btn--primary" data-close-modal>Got it</button>
+    </div>
+  </div>
+</div>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

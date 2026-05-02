@@ -9,8 +9,9 @@ const DEFAULT_CENTER = [-25.7479, 28.1879];
 const DEFAULT_ZOOM = 14;
 
 const map = L.map('map', {
-  zoomControl: false,            // we'll skip zoom buttons for the clean look
-  attributionControl: true
+  zoomControl: false,
+  attributionControl: true,
+  doubleClickZoom: false   // we use double-click for opening profiles
 }).setView(DEFAULT_CENTER, DEFAULT_ZOOM);
 
 // CartoDB Dark Matter — free dark map tiles, perfect for our aesthetic
@@ -27,16 +28,25 @@ function makePin(creative) {
   const cat = CATEGORIES[creative.category];
   if (!cat) return null;
 
-  // Use Leaflet's divIcon so we can fully style with CSS
   const icon = L.divIcon({
-    className: '',  // no default class
+    className: '',
     html: `<div class="creative-pin shape-${cat.shape}" style="background-color: ${cat.colorHex};"><span>${cat.initial}</span></div>`,
     iconSize: [36, 36],
     iconAnchor: [18, 18]
   });
 
   const marker = L.marker([creative.lat, creative.lng], { icon }).addTo(map);
+
+  // Single click → popup with quick info
   marker.bindPopup(`<strong>${creative.name}</strong><br/><span style="color:#888">${cat.label}</span>`);
+
+  // Double click → full profile
+  marker.on('dblclick', (e) => {
+    // Stop the map's default zoom-on-doubleclick behavior
+    L.DomEvent.stopPropagation(e);
+    window.location.href = `profile.html?id=${creative.id}`;
+  });
+
   pinsById[creative.id] = marker;
   return marker;
 }
@@ -191,15 +201,53 @@ listViewBtn.addEventListener('click', () => {
   listView.classList.add('is-open');
 });
 
+// --- Profile button avatar ---
+// For now we hardcode "the logged-in user" as Modisa (id=999).
+// Once auth is wired, this will read from the session.
+const ME = getCreativeById(999);
+const profileAvatar = document.getElementById('profileAvatar');
+if (ME && ME.photos && ME.photos.length > 0) {
+  profileAvatar.style.backgroundImage = `url('${ME.photos[0]}')`;
+  profileAvatar.setAttribute('data-has-photo', 'true');
+}
+
+// --- Legend modal ---
+const legendBtn = document.getElementById('legendBtn');
+const legendModal = document.getElementById('legendModal');
+const legendGrid = document.getElementById('legendGrid');
+
+// Build the grid once on page load (data comes from CATEGORIES)
+legendGrid.innerHTML = Object.values(CATEGORIES).map(c => `
+  <div class="legend-item">
+    <div class="legend-item__shape shape-${c.shape}" style="background-color: ${c.colorHex};">
+      <span>${c.initial}</span>
+    </div>
+    <div class="legend-item__label">${c.label}</div>
+  </div>
+`).join('');
+
+legendBtn.addEventListener('click', () => {
+  legendModal.classList.add('is-open');
+  legendModal.setAttribute('aria-hidden', 'false');
+});
+
+// Close handlers (reuse the same data-close-modal pattern as the meetup modal)
+legendModal.addEventListener('click', (e) => {
+  if (e.target.matches('[data-close-modal]')) {
+    legendModal.classList.remove('is-open');
+    legendModal.setAttribute('aria-hidden', 'true');
+  }
+});
+
 // --- 5. List item click → show meetup disclaimer ---
 const meetupModal = document.getElementById('meetupModal');
 
 listItems.addEventListener('click', (e) => {
   const item = e.target.closest('.list-item');
   if (!item) return;
-  // For now: show the safety disclaimer. Later this opens the profile page.
-  meetupModal.classList.add('is-open');
-  meetupModal.setAttribute('aria-hidden', 'false');
+  const id = item.dataset.id;
+  // Open the profile page for this creative
+  window.location.href = `profile.html?id=${id}`;
 });
 
 // Close modal handlers
@@ -214,6 +262,11 @@ document.getElementById('acknowledgeBtn').addEventListener('click', () => {
   meetupModal.classList.remove('is-open');
   // Later: navigate to the creative's profile page.
   console.log('[Connekkt] User acknowledged disclaimer.');
+});
+
+// Profile button → open the logged-in user's profile (Modisa for now)
+document.getElementById('profileBtn').addEventListener('click', () => {
+  window.location.href = 'profile.html?id=999';
 });
 
 // --- 6. Filter button (UI placeholder) ---

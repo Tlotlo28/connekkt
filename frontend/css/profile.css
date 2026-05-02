@@ -1,0 +1,625 @@
+/* ===========================
+   PROFILE PAGE — V2
+   Cleaner, fixed fade, scroll hint, no black bars on mobile.
+   =========================== */
+
+.profile-body {
+  background: var(--bg-base);
+  height: 100vh;
+  /* Use Inter for body / Space Grotesk for display — matches splash + home */
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+/* Layout shell */
+.profile {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* --- Top bar --- */
+.profile__top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4);
+  background: linear-gradient(180deg, rgba(10, 10, 15, 0.5), transparent);
+}
+
+.profile__top-bar-label {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--text-secondary);
+}
+
+/* --- Media column (vertical photo scroll) --- */
+.profile__media {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; /* smoother iOS scroll */
+}
+.profile__media::-webkit-scrollbar { display: none; }
+
+.photo-stack {
+  position: relative;
+  width: 100%;
+}
+
+/* Each slide = full viewport height, snaps cleanly */
+.photo-slide {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;  /* never skip a slide on a fast flick */
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* The actual image — portrait-locked, fills the slide cleanly */
+.photo-slide__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;       /* fills the screen */
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Subtle parallax-ish ken-burns: gentle zoom on the active slide */
+  transition: transform 1.2s var(--ease-smooth);
+}
+
+/* The currently visible slide gets a slow zoom-in */
+.photo-slide.is-visible .photo-slide__img {
+  transform: scale(1.05);
+}
+
+/* Empty state — no photos uploaded */
+.photo-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, var(--bg-elevated), var(--bg-base));
+}
+
+.photo-empty__shape {
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--bg-base);
+  opacity: 0.85;
+}
+
+/* --- FIXED black overlay so the bottom text stays readable --- */
+.media-overlay {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  height: 55%;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(10, 10, 15, 0.35) 35%,
+    rgba(10, 10, 15, 0.75) 75%,
+    rgba(10, 10, 15, 0.95) 100%
+  );
+}
+
+/* --- FIXED fade color band — sits on top of the overlay, doesn't scroll away --- */
+.media-fade {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  height: 25%;
+  z-index: 6;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    var(--fade-color, var(--bg-base)) 100%
+  );
+  opacity: 0.35;             /* tinted, not solid — color flavor without hiding the photo */
+  transition: background 0.4s var(--ease-smooth);
+}
+
+/* --- Scroll-down hint --- */
+.scroll-hint {
+  position: fixed;
+  bottom: var(--space-16);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  animation: hint-bounce 2s ease-in-out infinite;
+  transition: opacity 0.4s;
+}
+
+.scroll-hint.is-hidden {
+  opacity: 0;
+}
+
+.scroll-hint__label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+}
+
+.scroll-hint svg {
+  width: 18px;
+  height: 18px;
+}
+
+@keyframes hint-bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%      { transform: translateX(-50%) translateY(8px); }
+}
+
+/* --- Right-side action column --- */
+.profile__actions {
+  position: fixed;
+  top: 22%;
+  right: var(--space-4);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.actions__followers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--space-3);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.actions__count {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.actions__label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--text-primary);
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+.action-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(21, 21, 29, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-bounce), background 0.2s;
+}
+
+.action-icon:hover { background: rgba(30, 30, 41, 0.85); transform: scale(1.1); }
+.action-icon:active { transform: scale(0.92); }
+.action-icon svg { width: 20px; height: 20px; }
+
+/* Like button (inactive but playful) */
+.like-btn { position: relative; overflow: hidden; }
+.like-btn svg { transition: stroke 0.3s, fill 0.3s, transform 0.3s; }
+
+.like-btn.is-playing svg {
+  stroke: #FF3D5A;
+  animation: like-flicker 0.8s var(--ease-bounce);
+}
+
+@keyframes like-flicker {
+  0%   { transform: scale(1);    fill: transparent; }
+  25%  { transform: scale(1.4);  fill: #FF3D5A; }
+  45%  { transform: scale(0.9);  fill: transparent; }
+  65%  { transform: scale(1.25); fill: #FF3D5A; }
+  85%  { transform: scale(0.95); fill: transparent; }
+  100% { transform: scale(1);    fill: transparent; stroke: currentColor; }
+}
+
+.like-btn__shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #FF3D5A;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.like-btn.is-playing .like-btn__shimmer {
+  animation: like-ring 0.8s ease-out;
+}
+
+@keyframes like-ring {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2); }
+}
+
+/* "Photo focus mode" — double-click hides UI for a clearer view */
+.profile.is-focus-mode .profile__top-bar,
+.profile.is-focus-mode .profile__actions,
+.profile.is-focus-mode .profile__info,
+.profile.is-focus-mode .scroll-hint,
+.profile.is-focus-mode .media-overlay,
+.profile.is-focus-mode .media-fade {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-smooth);
+}
+
+/* --- Bottom info --- */
+.profile__info {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10;
+  padding: 0 var(--space-6) var(--space-6);
+  text-align: center;
+  pointer-events: none;
+}
+
+.profile__info > * { pointer-events: auto; }
+
+.profile__name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+  line-height: 1.1;
+}
+
+.profile__field {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-top: var(--space-3);
+  opacity: 0.85;
+}
+
+.profile__bio {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  opacity: 0.85;
+  margin: var(--space-4) auto 0;
+  max-width: 360px;
+}
+
+/* DNA tags */
+.dna-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.dna-tag {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+}
+
+/* Socials */
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.social-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.2s;
+  border-radius: 50%;
+}
+
+.social-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.social-icon svg { width: 16px; height: 16px; }
+
+/* Foreign link inherits user's category shape */
+.social-icon.is-foreign.shape-circle       { border-radius: 50%; }
+.social-icon.is-foreign.shape-square       { border-radius: 8px; }
+.social-icon.is-foreign.shape-diamond      { transform: rotate(45deg); border-radius: 4px; }
+.social-icon.is-foreign.shape-diamond svg  { transform: rotate(-45deg); }
+.social-icon.is-foreign.shape-hex          { clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%); border-radius: 0; }
+.social-icon.is-foreign.shape-rounded-rect { border-radius: 6px; }
+.social-icon.is-foreign.shape-triangle     { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); border-radius: 0; }
+.social-icon.is-foreign.shape-pill         { border-radius: 999px; width: 50px; }
+
+/* Fade color picker (only shown to the profile owner) */
+.fade-color-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.fade-color-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+.fade-color-btn__swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--fade-color, var(--bg-base));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ===========================
+   TABLET (>=768px)
+   =========================== */
+@media (min-width: 768px) {
+  .profile__actions { top: 18%; right: var(--space-8); }
+  .action-icon { width: 52px; height: 52px; }
+  .action-icon svg { width: 24px; height: 24px; }
+  .profile__name { font-size: clamp(2.5rem, 6vw, 4rem); }
+}
+
+/* ===========================
+   DESKTOP (>=1024px) — magazine spread
+   =========================== */
+@media (min-width: 1024px) {
+  .profile {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    grid-template-rows: 1fr;
+  }
+
+  .profile__media { position: relative; grid-column: 1; }
+
+  /* Overlay/fade only span the media column on desktop */
+  .media-overlay,
+  .media-fade { width: 60%; left: 0; right: auto; }
+
+  .profile__info {
+    position: relative;
+    grid-column: 2;
+    background: var(--bg-surface);
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    padding: var(--space-16) var(--space-8) var(--space-8);
+    text-align: left;
+    overflow-y: auto;
+    height: 100vh;
+  }
+
+  .profile__name { text-align: left; }
+  .profile__bio  { margin-left: 0; max-width: none; }
+  .dna-tags, .socials { justify-content: flex-start; }
+
+  .profile__actions { right: calc(40% + var(--space-6)); }
+}
+
+/* ===========================
+   MODAL (shared with home page styling)
+   Profile page didn't have modal styles yet — adding here.
+   =========================== */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.modal.is-open { display: flex; }
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal__panel {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  max-width: 420px;
+  width: 100%;
+  animation: modal-in 0.3s var(--ease-bounce);
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.modal__title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.modal__subtitle {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin-bottom: var(--space-6);
+}
+
+.modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-6);
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.btn--ghost:hover { background: rgba(255, 255, 255, 0.05); }
+
+.btn--primary {
+  background: linear-gradient(135deg, #FF3D5A, #7B3FE4);
+  color: white;
+}
+.btn--primary:hover { transform: translateY(-1px); }
+
+/* ===========================
+   CONTACT LIST (inside the contact modal)
+   =========================== */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+a.contact-row:hover {
+  background: rgba(30, 30, 41, 0.95);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.contact-row__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
+
+.contact-row__icon svg { width: 18px; height: 18px; }
+
+.contact-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-row__label {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.contact-row__value {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+/* "Note" row uses a different look (it's a message, not a clickable contact method) */
+.contact-row--note {
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.contact-row--note .contact-row__icon {
+  color: var(--cat-musician); /* warm/welcoming amber */
+}
+
+/* Empty state — no contact methods shared at all */
+.contact-empty {
+  text-align: center;
+  padding: var(--space-6) var(--space-3);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
