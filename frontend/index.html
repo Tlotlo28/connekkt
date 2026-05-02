@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <title>Connekkt — Connekkt the dots.</title>
+  <link rel="icon" type="image/png" href="assets/connekkt-logo.png" />
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/splash.css" />
+</head>
+<body>
+  <main class="splash" aria-label="Connekkt is loading">
+    <!-- Animated background grid -->
+    <div class="grid-bg" aria-hidden="true"></div>
+
+    <!-- Floating geometric shapes representing each creative category -->
+    <div class="shapes" aria-hidden="true">
+      <span class="shape shape--circle"></span>
+      <span class="shape shape--square"></span>
+      <span class="shape shape--diamond"></span>
+      <span class="shape shape--hex"></span>
+      <span class="shape shape--triangle"></span>
+      <span class="shape shape--pill"></span>
+    </div>
+
+    <!-- Connecting lines that draw across the screen -->
+    <svg class="connections" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
+      <line x1="20%" y1="30%" x2="50%" y2="50%" class="line line--1" />
+      <line x1="50%" y1="50%" x2="80%" y2="25%" class="line line--2" />
+      <line x1="50%" y1="50%" x2="30%" y2="75%" class="line line--3" />
+      <line x1="50%" y1="50%" x2="75%" y2="70%" class="line line--4" />
+    </svg>
+
+    <!-- The logo -->
+    <div class="logo-wrap">
+      <img src="assets/connekkt-logo.png" alt="Connekkt" class="logo" />
+      <div class="logo-glow" aria-hidden="true"></div>
+    </div>
+
+    <!-- Wordmark and tagline -->
+    <div class="brand">
+      <h1 class="wordmark">connekkt</h1>
+      <p class="tagline">Connekkt the dots.</p>
+    </div>
+  </main>
+
+  <script src="js/splash.js"></script>
+</body>
+</html>

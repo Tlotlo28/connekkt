@@ -1,0 +1,227 @@
+/* ===========================
+   SPLASH SCREEN
+   =========================== */
+
+.splash {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #15151D 0%, #0A0A0F 70%);
+  overflow: hidden;
+}
+
+/* --- Subtle animated grid in the background --- */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-drift 20s linear infinite;
+}
+
+@keyframes grid-drift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(60px, 60px); }
+}
+
+/* --- Floating shapes --- */
+.shapes { position: absolute; inset: 0; pointer-events: none; }
+
+.shape {
+  position: absolute;
+  opacity: 0;
+  filter: blur(0.5px);
+  animation: float-in 1.4s var(--ease-smooth) forwards, drift 8s ease-in-out infinite;
+}
+
+.shape--circle {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  background: var(--cat-photographer);
+  top: 18%; left: 12%;
+  animation-delay: 0.1s, 1.5s;
+  box-shadow: 0 0 40px var(--cat-photographer);
+}
+.shape--square {
+  width: 50px; height: 50px;
+  border-radius: 12px;
+  background: var(--cat-designer);
+  top: 25%; right: 15%;
+  animation-delay: 0.3s, 1.7s;
+  box-shadow: 0 0 40px var(--cat-designer);
+}
+.shape--diamond {
+  width: 45px; height: 45px;
+  background: var(--cat-videographer);
+  top: 70%; left: 18%;
+  transform: rotate(45deg);
+  animation-delay: 0.5s, 1.9s;
+  box-shadow: 0 0 40px var(--cat-videographer);
+}
+.shape--hex {
+  width: 55px; height: 55px;
+  background: var(--cat-musician);
+  clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+  top: 75%; right: 20%;
+  animation-delay: 0.7s, 2.1s;
+  box-shadow: 0 0 40px var(--cat-musician);
+}
+.shape--triangle {
+  width: 0; height: 0;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-bottom: 45px solid var(--cat-marketer);
+  top: 15%; left: 45%;
+  animation-delay: 0.9s, 2.3s;
+  filter: drop-shadow(0 0 30px var(--cat-marketer));
+}
+.shape--pill {
+  width: 70px; height: 30px;
+  border-radius: 999px;
+  background: var(--cat-writer);
+  bottom: 15%; left: 48%;
+  animation-delay: 1.1s, 2.5s;
+  box-shadow: 0 0 40px var(--cat-writer);
+}
+
+@keyframes float-in {
+  to { opacity: 0.7; }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(var(--r, 0deg)); }
+  50%      { transform: translate(10px, -15px) rotate(var(--r, 0deg)); }
+}
+
+.shape--diamond { --r: 45deg; }
+
+/* --- Connecting lines (SVG) --- */
+.connections {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.line {
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 1;
+  stroke-dasharray: 1500;
+  stroke-dashoffset: 1500;
+  animation: draw-line 1.8s var(--ease-smooth) forwards;
+}
+.line--1 { animation-delay: 0.4s; }
+.line--2 { animation-delay: 0.7s; }
+.line--3 { animation-delay: 1.0s; }
+.line--4 { animation-delay: 1.3s; }
+
+@keyframes draw-line {
+  to { stroke-dashoffset: 0; }
+}
+
+/* --- Logo --- */
+.logo-wrap {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  opacity: 0;
+  transform: scale(0.6) rotate(-15deg);
+  animation: logo-entrance 1.4s var(--ease-bounce) 0.3s forwards,
+             logo-pulse 3s ease-in-out 1.7s infinite;
+}
+
+@keyframes logo-entrance {
+  0%   { opacity: 0; transform: scale(0.6) rotate(-15deg); }
+  60%  { opacity: 1; transform: scale(1.08) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes logo-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+
+.logo-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(123, 63, 228, 0.4) 0%, transparent 60%);
+  opacity: 0;
+  filter: blur(20px);
+  animation: glow-in 1.5s ease 0.6s forwards, glow-pulse 3s ease-in-out 2s infinite;
+  z-index: -1;
+}
+
+@keyframes glow-in { to { opacity: 1; } }
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.2); }
+}
+
+/* --- Brand text --- */
+.brand {
+  margin-top: var(--space-8);
+  text-align: center;
+  z-index: 2;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, #7B3FE4, #FF3D5A, #FFB23F, #00B8A9, #A8E03A);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  animation: wordmark-in 1s ease 1.2s forwards, gradient-flow 6s linear 2.2s infinite;
+}
+
+@keyframes wordmark-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes gradient-flow {
+  to { background-position: 200% 0; }
+}
+
+.tagline {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  margin-top: var(--space-2);
+  opacity: 0;
+  animation: tagline-in 0.8s ease 1.6s forwards;
+}
+
+@keyframes tagline-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 0.85; transform: translateY(0); }
+}
+
+/* --- Reduced motion respect --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
