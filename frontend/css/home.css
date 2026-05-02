@@ -1,0 +1,467 @@
+/* ===========================
+   HOME SCREEN
+   Map fills the screen. Everything else floats over it.
+   =========================== */
+
+.home-body {
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* --- Top bar --- */
+.top-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  /* Subtle gradient so icons stay readable over any map area */
+  background: linear-gradient(180deg, rgba(10, 10, 15, 0.85) 0%, rgba(10, 10, 15, 0) 100%);
+  pointer-events: none; /* let map clicks through where there's no button */
+}
+
+.top-bar__left {
+  margin-right: auto;
+  pointer-events: auto;
+}
+
+.top-bar__logo {
+  height: 36px;
+  width: auto;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+
+/* --- Generic icon button --- */
+.icon-btn {
+  pointer-events: auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(21, 21, 29, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-smooth), background 0.2s;
+}
+
+.icon-btn:hover {
+  background: rgba(30, 30, 41, 0.95);
+  transform: scale(1.05);
+}
+
+.icon-btn:active { transform: scale(0.95); }
+
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* --- The map itself --- */
+.map {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Override Leaflet's default attribution to fit our dark theme */
+.leaflet-container {
+  background: var(--bg-base);
+  font-family: var(--font-body);
+}
+
+.leaflet-control-attribution {
+  background: rgba(21, 21, 29, 0.8) !important;
+  color: var(--text-muted) !important;
+  font-size: 10px !important;
+  padding: 2px 6px !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--text-secondary) !important;
+}
+
+/* --- View toggle (Map / List) --- */
+.view-toggle {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 400;
+  display: flex;
+  background: rgba(21, 21, 29, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+}
+
+.view-toggle__btn {
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 8px 20px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-smooth);
+}
+
+.view-toggle__btn.is-active {
+  background: var(--text-primary);
+  color: var(--bg-base);
+}
+
+/* --- Scan button --- */
+.scan-wrap {
+  position: fixed;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.scan-radius-label {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(21, 21, 29, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  transition: all 0.3s var(--ease-smooth);
+  white-space: nowrap;
+}
+
+.scan-btn {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.scan-btn__core {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7B3FE4 0%, #FF3D5A 50%, #FFB23F 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow:
+    0 8px 24px rgba(255, 61, 90, 0.4),
+    0 0 40px rgba(123, 63, 228, 0.3);
+  transition: transform 0.2s var(--ease-smooth);
+  z-index: 2;
+}
+
+.scan-btn__core svg {
+  width: 28px;
+  height: 28px;
+}
+
+/* The two pulsing rings — heartbeat animation */
+.scan-btn__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7B3FE4, #FF3D5A);
+  opacity: 0.6;
+  animation: scan-pulse 1.8s ease-out infinite;
+}
+
+.scan-btn__pulse--2 {
+  animation-delay: 0.9s;
+}
+
+@keyframes scan-pulse {
+  0%   { transform: scale(0.95); opacity: 0.6; }
+  100% { transform: scale(1.8);  opacity: 0; }
+}
+
+/* When user is holding the button, accelerate the heartbeat */
+.scan-btn.is-scanning .scan-btn__pulse {
+  animation-duration: 0.7s;
+}
+
+.scan-btn.is-scanning .scan-btn__core {
+  transform: scale(0.92);
+}
+
+/* --- List view (slides up from bottom) --- */
+.list-view {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 450;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  max-height: 60vh;
+  transform: translateY(100%);
+  transition: transform 0.4s var(--ease-smooth);
+  display: flex;
+  flex-direction: column;
+}
+
+.list-view.is-open {
+  transform: translateY(0);
+}
+
+.list-view__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--space-6) var(--space-4) var(--space-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.list-view__header h2 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.list-view__count {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.list-view__items {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3) var(--space-4) var(--space-12);
+}
+
+/* Individual list item */
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.list-item:hover {
+  background: var(--bg-elevated);
+}
+
+.list-item__shape {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--bg-base);
+}
+
+.list-item__info { flex: 1; min-width: 0; }
+
+.list-item__name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.list-item__meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.list-item__distance {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* --- Modal --- */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.modal.is-open { display: flex; }
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal__panel {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8);
+  max-width: 420px;
+  width: 100%;
+  animation: modal-in 0.3s var(--ease-bounce);
+}
+
+@keyframes modal-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  margin-bottom: var(--space-3);
+}
+
+.modal__body {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: var(--space-6);
+}
+
+.modal__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.btn--ghost:hover { background: rgba(255, 255, 255, 0.05); }
+
+.btn--primary {
+  background: linear-gradient(135deg, #FF3D5A, #7B3FE4);
+  color: white;
+}
+.btn--primary:hover { transform: translateY(-1px); }
+
+/* --- Custom Leaflet markers (creative pins) --- */
+.creative-pin {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--bg-base);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s var(--ease-bounce);
+  cursor: pointer;
+}
+
+.creative-pin:hover { transform: scale(1.15); }
+
+/* Shape variants — match category shapes */
+.creative-pin.shape-circle      { border-radius: 50%; }
+.creative-pin.shape-square      { border-radius: 8px; }
+.creative-pin.shape-diamond     { transform: rotate(45deg); border-radius: 4px; }
+.creative-pin.shape-diamond span { transform: rotate(-45deg); display: block; }
+.creative-pin.shape-hex         { clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%); }
+.creative-pin.shape-rounded-rect{ border-radius: 6px; width: 44px; }
+.creative-pin.shape-triangle    { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+.creative-pin.shape-pill        { border-radius: 999px; width: 50px; height: 28px; }
+
+/* The scan radius circle on the map */
+.leaflet-interactive.scan-radius {
+  fill: url(#scanGradient);
+  stroke: rgba(255, 61, 90, 0.6);
+  stroke-width: 2;
+}
+
+
+/* ===========================
+   AVATAR (list view, when user has a photo)
+   Circle with a category-colored ring.
+   =========================== */
+.list-item__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--text-muted);
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ===========================
+   LIST ITEM SHAPE FALLBACKS
+   (Earlier round was missing these — all shapes rendered as squares.)
+   =========================== */
+.list-item__shape.shape-circle       { border-radius: 50%; }
+.list-item__shape.shape-square       { border-radius: 8px; }
+.list-item__shape.shape-diamond      { transform: rotate(45deg); border-radius: 4px; }
+.list-item__shape.shape-diamond span { display: block; transform: rotate(-45deg); }
+.list-item__shape.shape-hex          { clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%); }
+.list-item__shape.shape-rounded-rect { border-radius: 6px; }
+.list-item__shape.shape-triangle     { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+.list-item__shape.shape-pill         { border-radius: 999px; }
+
+/* ===========================
+   SCAN RESULT REVEAL
+   Map pins dim during scan, then fade back in (staggered) when found.
+   =========================== */
+.creative-pin {
+  /* Smooth opacity transitions for the dim/reveal states */
+  transition: opacity 0.4s var(--ease-smooth);
+}
+
+.creative-pin.is-dimmed {
+  opacity: 0.2;
+}
+
+.creative-pin.is-revealed {
+  animation: pin-reveal 0.55s var(--ease-bounce) both;
+}
+
+@keyframes pin-reveal {
+  0%   { opacity: 0;   }
+  60%  { opacity: 1;   }
+  100% { opacity: 1;   }
+}

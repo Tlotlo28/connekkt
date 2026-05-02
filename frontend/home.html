@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <title>Connekkt — Home</title>
+  <link rel="icon" type="image/png" href="assets/connekkt-logo.png" />
+
+  <!-- Leaflet CSS (the map library) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Our styles -->
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/home.css" />
+</head>
+<body class="home-body">
+
+  <!-- Top bar: logo + filter + profile -->
+  <header class="top-bar">
+    <div class="top-bar__left">
+      <img src="assets/connekkt-logo.png" alt="Connekkt" class="top-bar__logo" />
+    </div>
+
+    <button class="icon-btn filter-btn" aria-label="Open filters" id="filterBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="6" x2="20" y2="6"/>
+        <line x1="7" y1="12" x2="17" y2="12"/>
+        <line x1="10" y1="18" x2="14" y2="18"/>
+      </svg>
+    </button>
+
+    <button class="icon-btn profile-btn" aria-label="Open profile" id="profileBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- The map -->
+  <div id="map" class="map" aria-label="Map of nearby creatives"></div>
+
+  <!-- View mode toggle (Map / List) -->
+  <div class="view-toggle">
+    <button class="view-toggle__btn is-active" data-view="map" id="mapViewBtn">Map</button>
+    <button class="view-toggle__btn" data-view="list" id="listViewBtn">List</button>
+  </div>
+
+  <!-- List view (hidden by default, slides up from bottom) -->
+  <section class="list-view" id="listView" aria-hidden="true">
+    <div class="list-view__header">
+      <h2>Creatives nearby</h2>
+      <span class="list-view__count" id="listCount">0</span>
+    </div>
+    <div class="list-view__items" id="listItems"></div>
+  </section>
+
+  <!-- The scan button — the star of the show -->
+  <div class="scan-wrap">
+    <div class="scan-radius-label" id="radiusLabel" aria-live="polite">Hold to scan</div>
+    <button class="scan-btn" id="scanBtn" aria-label="Hold to scan for nearby creatives">
+      <span class="scan-btn__pulse"></span>
+      <span class="scan-btn__pulse scan-btn__pulse--2"></span>
+      <span class="scan-btn__core">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
+        </svg>
+      </span>
+    </button>
+  </div>
+
+  <!-- Safety disclaimer modal (hidden by default) -->
+  <div class="modal" id="meetupModal" aria-hidden="true" role="dialog">
+    <div class="modal__backdrop" data-close-modal></div>
+    <div class="modal__panel">
+      <h3 class="modal__title">Heads up before you link up</h3>
+      <p class="modal__body">
+        Connekkt strongly recommends keeping conversations online first. If you choose to meet in person, do it in a public place, tell a friend, and trust your gut. <strong>Connekkt is not liable</strong> for anything that happens during in-person meetups.
+      </p>
+      <div class="modal__actions">
+        <button class="btn btn--ghost" data-close-modal>Keep it online</button>
+        <button class="btn btn--primary" id="acknowledgeBtn">I understand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Our app code -->
+  <script src="js/categories.js"></script>
+  <script src="js/mock-data.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>
