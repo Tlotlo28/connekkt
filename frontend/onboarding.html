@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/tokens.css" />
   <link rel="stylesheet" href="css/onboarding.css" />
+  <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.css" />
 </head>
 <body class="onboarding-body">
 
@@ -118,7 +119,7 @@
     <!-- ===== STEP 5: PHOTOS ===== -->
     <section class="step" data-step="photos">
       <h1 class="step__title">Show your face</h1>
-      <p class="step__sub">Upload up to 3 <strong>portrait</strong> photos. Landscape shots will look weird in the cinematic profile view, so we recommend portrait only.</p>
+      <p class="step__sub">Upload up to 3 photos. <strong>3:4 portrait works best</strong> — if you pick something else, you can crop it to fit.</p>
 
       <div class="photo-uploader" id="photoUploader">
         <div class="photo-slot" data-slot="0">
@@ -174,6 +175,27 @@
 
   </main>
 
+  <!-- Crop modal — appears after user picks a photo -->
+<div class="crop-modal" id="cropModal" aria-hidden="true" role="dialog">
+  <div class="crop-modal__backdrop"></div>
+  <div class="crop-modal__panel">
+    <header class="crop-modal__header">
+      <h3 class="crop-modal__title">Adjust your photo</h3>
+      <p class="crop-modal__sub">Drag to reposition, pinch or scroll to zoom. Photos look best in <strong>3:4 portrait</strong>.</p>
+    </header>
+
+    <div class="crop-modal__stage">
+      <img id="cropImage" alt="" />
+    </div>
+
+    <div class="crop-modal__actions">
+      <button type="button" class="btn btn--ghost" id="cropCancelBtn">Cancel</button>
+      <button type="button" class="btn btn--primary" id="cropConfirmBtn">Looks good</button>
+    </div>
+  </div>
+</div>
+
+  <script src="https://unpkg.com/cropperjs@1.6.2/dist/cropper.min.js"></script>
   <script src="js/categories.js"></script>
   <script src="js/onboarding.js"></script>
 </body>

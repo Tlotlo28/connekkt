@@ -185,9 +185,104 @@ dnaInputTags.addEventListener('click', (e) => {
   }
 });
 
-// --- 7. STEP 5: PHOTO UPLOAD ---
-// Convert each uploaded file to a base64 data URL so we can preview AND send to backend.
+// --- 7. STEP 5: PHOTO UPLOAD (with crop modal) ---
+// Flow:
+//   1. User picks a file
+//   2. We open the crop modal with Cropper.js
+//   3. User adjusts the crop box (locked to 3:4 ratio)
+//   4. On confirm, we save the cropped image as a base64 data URL
+//   5. On cancel, we discard and let them try again
+
+let cropper = null;          // active Cropper.js instance
+let activeSlotIndex = null;  // which photo slot triggered the modal
+
+const cropModal = document.getElementById('cropModal');
+const cropImage = document.getElementById('cropImage');
+const cropCancelBtn = document.getElementById('cropCancelBtn');
+const cropConfirmBtn = document.getElementById('cropConfirmBtn');
+
+function openCropModal(dataUrl, slotIndex) {
+  activeSlotIndex = slotIndex;
+  cropImage.src = dataUrl;
+  cropModal.classList.add('is-open');
+  cropModal.setAttribute('aria-hidden', 'false');
+
+  // Wait for the image to load BEFORE initializing Cropper —
+  // Cropper.js needs the natural width/height to set up the crop box.
+  cropImage.onload = () => {
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(cropImage, {
+      aspectRatio: 3 / 4,        // locks the crop box to portrait
+      viewMode: 1,               // crop box can't go outside the image
+      autoCropArea: 1,           // start with the largest possible crop
+      background: false,         // hide the checkerboard
+      movable: true,             // user can drag the image
+      zoomable: true,            // user can zoom
+      scalable: false,
+      rotatable: false,
+      responsive: true,
+      dragMode: 'move'           // drag = pan the image (instead of resizing)
+    });
+  };
+}
+
+function closeCropModal() {
+  cropModal.classList.remove('is-open');
+  cropModal.setAttribute('aria-hidden', 'true');
+  if (cropper) {
+    cropper.destroy();
+    cropper = null;
+  }
+  activeSlotIndex = null;
+}
+
+cropCancelBtn.addEventListener('click', closeCropModal);
+
+cropConfirmBtn.addEventListener('click', () => {
+  if (!cropper || activeSlotIndex === null) return;
+
+  // Get the cropped image as a 600x800 JPEG (3:4 ratio).
+  // We export at a fixed size so all profile photos are consistent
+  // and we don't bloat the database with massive originals.
+  const canvas = cropper.getCroppedCanvas({
+    width: 600,
+    height: 800,
+    imageSmoothingQuality: 'high'
+  });
+
+  const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.9); // 0.9 = 90% quality
+
+  // Save to state and update the slot preview
+  onboardingData.photos[activeSlotIndex] = croppedDataUrl;
+  updateSlotPreview(activeSlotIndex, croppedDataUrl);
+
+  closeCropModal();
+});
+
+// Helper: update a slot's preview to show the chosen image
+function updateSlotPreview(slotIndex, dataUrl) {
+  const slot = document.querySelector(`.photo-slot[data-slot="${slotIndex}"]`);
+  if (!slot) return;
+
+  let preview = slot.querySelector('.photo-slot__preview');
+  if (!preview) {
+    preview = document.createElement('div');
+    preview.className = 'photo-slot__preview';
+    slot.appendChild(preview);
+  }
+  preview.style.backgroundImage = `url('${dataUrl}')`;
+  slot.classList.add('has-photo');
+}
+
+// Wire each file input to the crop flow.
+// The trick for "select same file twice" is `input.value = ''` on click —
+// that resets the input so the change event fires every time.
 document.querySelectorAll('.photo-slot__input').forEach(input => {
+  // Reset the input value on click so re-selecting the same file works
+  input.addEventListener('click', (e) => {
+    e.target.value = '';
+  });
+
   input.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -195,27 +290,15 @@ document.querySelectorAll('.photo-slot__input').forEach(input => {
     const slot = input.closest('.photo-slot');
     const slotIndex = parseInt(slot.dataset.slot);
 
-    // Read the file as a data URL (base64-ish format the browser can render directly)
+    // Read the file as a data URL, then send it to the cropper
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const dataUrl = ev.target.result;
-
-      // Show preview in the slot
-      let preview = slot.querySelector('.photo-slot__preview');
-      if (!preview) {
-        preview = document.createElement('div');
-        preview.className = 'photo-slot__preview';
-        slot.appendChild(preview);
-      }
-      preview.style.backgroundImage = `url('${dataUrl}')`;
-      slot.classList.add('has-photo');
-
-      // Save to state at the right slot index
-      onboardingData.photos[slotIndex] = dataUrl;
+      openCropModal(ev.target.result, slotIndex);
     };
     reader.readAsDataURL(file);
   });
 });
+
 
 // --- 8. STEP 6: SOCIALS ---
 const SOCIAL_TYPES = [
