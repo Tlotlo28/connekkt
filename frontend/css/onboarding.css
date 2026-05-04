@@ -1,0 +1,455 @@
+/* ===========================
+   ONBOARDING
+   Single-page wizard. Each step = one section, only one visible at a time.
+   =========================== */
+
+.onboarding-body {
+  background: radial-gradient(ellipse at top, #1A1A2A 0%, var(--bg-base) 60%);
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Progress bar */
+.progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  z-index: 100;
+}
+
+.progress__fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7B3FE4, #FF3D5A, #FFB23F, #00B8A9);
+  transition: width 0.5s var(--ease-smooth);
+}
+
+/* Back button */
+.back-btn {
+  position: fixed;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: 50;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.back-btn:hover { background: rgba(255, 255, 255, 0.12); transform: scale(1.05); }
+.back-btn svg { width: 18px; height: 18px; }
+
+/* Layout shell */
+.onboarding {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 80px var(--space-6) var(--space-12);
+  position: relative;
+}
+
+/* Steps — only one visible at a time */
+.step {
+  display: none;
+  animation: step-in 0.5s var(--ease-smooth);
+}
+
+.step.is-active { display: block; }
+
+@keyframes step-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.step__logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: var(--space-6);
+}
+
+.step__title {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-2);
+  line-height: 1.2;
+}
+
+.step__sub {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: var(--space-8);
+}
+
+.step__actions { margin-top: var(--space-8); }
+.step__actions--stack { display: flex; flex-direction: column; gap: var(--space-3); }
+.step__actions--row   { display: flex; gap: var(--space-3); }
+
+/* ===========================
+   FORM CONTROLS
+   =========================== */
+.form { display: flex; flex-direction: column; gap: var(--space-5); }
+
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.field__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.field__hint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  align-self: flex-end;
+}
+
+.form__error {
+  color: #FF3D5A;
+  font-size: 0.85rem;
+  margin-top: var(--space-2);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.25);
+  background: var(--bg-elevated);
+}
+
+textarea { resize: vertical; min-height: 100px; }
+
+/* ===========================
+   BUTTONS
+   =========================== */
+.btn {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn--lg { padding: 16px 24px; font-size: 1rem; }
+.btn--full { width: 100%; }
+
+.btn--primary {
+  background: linear-gradient(135deg, #FF3D5A, #7B3FE4);
+  color: white;
+  box-shadow: 0 4px 16px rgba(123, 63, 228, 0.25);
+}
+.btn--primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(123, 63, 228, 0.4);
+}
+.btn--primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.btn--ghost:hover { background: rgba(255, 255, 255, 0.05); }
+
+/* ===========================
+   FIELD PICKER (Step 2)
+   =========================== */
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.field-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-5) var(--space-3);
+  background: var(--bg-surface);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.25s var(--ease-smooth);
+  text-align: center;
+}
+
+.field-card:hover {
+  background: var(--bg-elevated);
+  transform: translateY(-2px);
+}
+
+.field-card.is-selected {
+  border-color: var(--card-color, #FF3D5A);
+  background: var(--bg-elevated);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.04), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.field-card__shape {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--bg-base);
+}
+
+.field-card__shape.shape-circle       { border-radius: 50%; }
+.field-card__shape.shape-square       { border-radius: 10px; }
+.field-card__shape.shape-diamond      { transform: rotate(45deg); border-radius: 6px; }
+.field-card__shape.shape-diamond span { display: block; transform: rotate(-45deg); }
+.field-card__shape.shape-hex          { clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%); }
+.field-card__shape.shape-rounded-rect { border-radius: 8px; width: 60px; }
+.field-card__shape.shape-triangle     { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+.field-card__shape.shape-pill         { border-radius: 999px; width: 64px; height: 32px; }
+
+.field-card__label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* ===========================
+   CHIP GRID (Sub-categories, DNA tags)
+   =========================== */
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip {
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.chip:hover { background: var(--bg-elevated); }
+
+.chip.is-selected {
+  background: var(--chip-color, #FFB23F);
+  color: var(--bg-base);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+/* DNA tags input */
+.dna-input-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.dna-input-tag {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  padding: 4px 8px 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dna-input-tag button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.dna-input-tag button:hover { color: var(--text-primary); }
+
+/* ===========================
+   PHOTO UPLOADER (Step 5)
+   =========================== */
+.photo-uploader {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.photo-slot {
+  position: relative;
+  aspect-ratio: 3 / 4;        /* enforces portrait orientation */
+  background: var(--bg-surface);
+  border: 2px dashed rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.photo-slot:hover { border-color: rgba(255, 255, 255, 0.3); }
+
+.photo-slot.has-photo {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.photo-slot__input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.photo-slot__placeholder {
+  font-size: 2rem;
+  color: var(--text-muted);
+}
+
+.photo-slot__label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.photo-slot__preview {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.photo-slot.has-photo .photo-slot__placeholder,
+.photo-slot.has-photo .photo-slot__label { display: none; }
+
+/* ===========================
+   SOCIALS (Step 6)
+   =========================== */
+.socials-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.social-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+.social-row__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.social-row__icon svg { width: 18px; height: 18px; color: var(--text-primary); }
+
+.social-row select,
+.social-row input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 4px 0;
+  outline: none;
+}
+
+.social-row select { background: var(--bg-surface); }
+
+.social-row__remove {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 4px 8px;
+}
+
+.social-row__remove:hover { color: #FF3D5A; }
+
+/* ===========================
+   DONE / CONFETTI (Step 7)
+   =========================== */
+.done-burst {
+  position: relative;
+  height: 120px;
+  margin-bottom: var(--space-6);
+}
+
+.burst-shape {
+  position: absolute;
+  top: 50%; left: 50%;
+  opacity: 0;
+  animation: burst-out 1.2s var(--ease-bounce) forwards;
+}
+
+.burst-shape--1 { width: 30px; height: 30px; background: #FF3D5A; border-radius: 50%; --tx: -80px; --ty: -40px; animation-delay: 0.1s; }
+.burst-shape--2 { width: 28px; height: 28px; background: #00B8A9; border-radius: 6px; --tx: 70px; --ty: -50px; animation-delay: 0.2s; }
+.burst-shape--3 { width: 26px; height: 26px; background: #FFB23F; clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%); --tx: -50px; --ty: 30px; animation-delay: 0.3s; }
+.burst-shape--4 { width: 24px; height: 24px; background: #7B3FE4; border-radius: 999px; --tx: 60px; --ty: 35px; animation-delay: 0.4s; }
+
+@keyframes burst-out {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  60%  { opacity: 1; transform: translate(calc(-50% + var(--tx) * 1.1), calc(-50% + var(--ty) * 1.1)) scale(1.1); }
+  100% { opacity: 1; transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1); }
+}

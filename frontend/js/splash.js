@@ -6,6 +6,8 @@ const SPLASH_DURATION = 2800;
 
 window.addEventListener('load', () => {
   setTimeout(() => {
-    window.location.href = 'home.html';
+    // For now: send everyone to onboarding. Once auth is wired (round 3),
+    // we'll check for a saved JWT and skip onboarding for returning users.
+    window.location.href = 'onboarding.html';
   }, SPLASH_DURATION);
 });

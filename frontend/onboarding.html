@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <title>Connekkt — Get Started</title>
+  <link rel="icon" type="image/png" href="assets/connekkt-logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/onboarding.css" />
+</head>
+<body class="onboarding-body">
+
+  <!-- Progress bar at top -->
+  <div class="progress" id="progress" aria-hidden="true">
+    <div class="progress__fill" id="progressFill"></div>
+  </div>
+
+  <!-- Back button (hidden on first step) -->
+  <button class="back-btn" id="backBtn" aria-label="Go back" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 18l-6-6 6-6"/>
+    </svg>
+  </button>
+
+  <main class="onboarding">
+
+    <!-- ===== STEP 0: WELCOME ===== -->
+    <section class="step is-active" data-step="welcome">
+      <img src="assets/connekkt-logo.png" alt="Connekkt" class="step__logo" />
+      <h1 class="step__title">Welcome to Connekkt</h1>
+      <p class="step__sub">A space for creatives to find each other, vibe, and build together. Connekkt the dots.</p>
+      <div class="step__actions step__actions--stack">
+        <button class="btn btn--primary btn--lg" data-go-next>Get started</button>
+        <button class="btn btn--ghost" id="loginBtn">I already have an account</button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 1: SIGN UP ===== -->
+    <section class="step" data-step="signup">
+      <h1 class="step__title">Create your account</h1>
+      <p class="step__sub">Just the basics for now. You'll fill out the fun stuff next.</p>
+
+      <form class="form" id="signupForm" novalidate>
+        <label class="field">
+          <span class="field__label">Stage name / display name</span>
+          <input type="text" id="fName" placeholder="e.g. Modisa" required maxlength="40" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input type="email" id="fEmail" placeholder="you@example.com" required />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Password</span>
+          <input type="password" id="fPassword" placeholder="At least 8 characters" required minlength="8" />
+        </label>
+
+        <p class="form__error" id="signupError" hidden></p>
+
+        <div class="step__actions">
+          <button type="submit" class="btn btn--primary btn--lg btn--full">Continue</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ===== STEP 2: PICK YOUR FIELD ===== -->
+    <section class="step" data-step="field">
+      <h1 class="step__title">What do you do?</h1>
+      <p class="step__sub">Pick your main creative field. You can refine this next.</p>
+
+      <div class="field-grid" id="fieldGrid"></div>
+
+      <div class="step__actions">
+        <button class="btn btn--primary btn--lg btn--full" id="fieldNextBtn" data-go-next disabled>Continue</button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 3: SUB-CATEGORIES ===== -->
+    <section class="step" data-step="subcategories">
+      <h1 class="step__title">Tell us more</h1>
+      <p class="step__sub" id="subcatSubtitle">Pick anything that fits — choose as many as you like.</p>
+
+      <div class="chip-grid" id="subcatGrid"></div>
+
+      <div class="step__actions step__actions--row">
+        <button class="btn btn--ghost" data-go-next>Skip</button>
+        <button class="btn btn--primary btn--full" data-go-next>Continue</button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 4: BIO + DNA TAGS ===== -->
+    <section class="step" data-step="bio">
+      <h1 class="step__title">Your vibe</h1>
+      <p class="step__sub">A short bio + a few tags that capture how you work.</p>
+
+      <label class="field">
+        <span class="field__label">Bio</span>
+        <textarea id="fBio" rows="4" maxlength="240" placeholder="What do you make? Who do you want to work with?"></textarea>
+        <span class="field__hint" id="bioCount">0 / 240</span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Creative DNA — type a tag and hit Enter</span>
+        <input type="text" id="fDnaInput" placeholder="afrohouse, lo-fi, minimalist..." maxlength="20" />
+        <div class="dna-input-tags" id="dnaInputTags"></div>
+      </label>
+
+      <div class="step__actions">
+        <button class="btn btn--primary btn--lg btn--full" data-go-next>Continue</button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 5: PHOTOS ===== -->
+    <section class="step" data-step="photos">
+      <h1 class="step__title">Show your face</h1>
+      <p class="step__sub">Upload up to 3 <strong>portrait</strong> photos. Landscape shots will look weird in the cinematic profile view, so we recommend portrait only.</p>
+
+      <div class="photo-uploader" id="photoUploader">
+        <div class="photo-slot" data-slot="0">
+          <input type="file" accept="image/*" class="photo-slot__input" />
+          <span class="photo-slot__placeholder">+</span>
+          <span class="photo-slot__label">Photo 1</span>
+        </div>
+        <div class="photo-slot" data-slot="1">
+          <input type="file" accept="image/*" class="photo-slot__input" />
+          <span class="photo-slot__placeholder">+</span>
+          <span class="photo-slot__label">Photo 2</span>
+        </div>
+        <div class="photo-slot" data-slot="2">
+          <input type="file" accept="image/*" class="photo-slot__input" />
+          <span class="photo-slot__placeholder">+</span>
+          <span class="photo-slot__label">Photo 3</span>
+        </div>
+      </div>
+
+      <div class="step__actions step__actions--row">
+        <button class="btn btn--ghost" data-go-next>Skip for now</button>
+        <button class="btn btn--primary btn--full" data-go-next>Continue</button>
+      </div>
+    </section>
+
+    <section class="step" data-step="socials">
+      <h1 class="step__title">Where else can people find you?</h1>
+      <p class="step__sub">Add the platforms you actually use. Skip the rest.</p>
+
+      <div class="socials-list" id="socialsList"></div>
+
+      <button class="btn btn--ghost btn--full" id="addForeignBtn" type="button">+ Add another link</button>
+
+      <div class="step__actions">
+        <button class="btn btn--primary btn--lg btn--full" data-go-next>Continue</button>
+      </div>
+    </section>
+
+    <!-- ===== STEP 7: DONE ===== -->
+    <section class="step" data-step="done">
+      <div class="done-burst" aria-hidden="true">
+        <span class="burst-shape burst-shape--1"></span>
+        <span class="burst-shape burst-shape--2"></span>
+        <span class="burst-shape burst-shape--3"></span>
+        <span class="burst-shape burst-shape--4"></span>
+      </div>
+      <h1 class="step__title">You're in.</h1>
+      <p class="step__sub">Welcome to Connekkt. Let's find your people.</p>
+      <div class="step__actions">
+        <button class="btn btn--primary btn--lg btn--full" id="finishBtn">Enter Connekkt</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/categories.js"></script>
+  <script src="js/onboarding.js"></script>
+</body>
+</html>
