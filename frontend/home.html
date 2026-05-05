@@ -20,31 +20,38 @@
 </head>
 <body class="home-body">
 
-  <!-- Top bar: logo + filter + profile -->
+  <!-- Top bar: logo + filter + legend + profile + logout -->
   <header class="top-bar">
     <div class="top-bar__left">
       <img src="assets/connekkt-logo.png" alt="Connekkt" class="top-bar__logo" />
     </div>
 
     <button class="icon-btn filter-btn" aria-label="Open filters" id="filterBtn">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="4" y1="6" x2="20" y2="6"/>
-    <line x1="7" y1="12" x2="17" y2="12"/>
-    <line x1="10" y1="18" x2="14" y2="18"/>
-  </svg>
-</button>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="4" y1="6" x2="20" y2="6"/>
+        <line x1="7" y1="12" x2="17" y2="12"/>
+        <line x1="10" y1="18" x2="14" y2="18"/>
+      </svg>
+    </button>
 
-<button class="icon-btn legend-btn" aria-label="Open legend" id="legendBtn">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M12 16v-4M12 8h.01"/>
-  </svg>
-</button>
+    <button class="icon-btn legend-btn" aria-label="Open legend" id="legendBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 16v-4M12 8h.01"/>
+      </svg>
+    </button>
 
-<button class="icon-btn profile-btn" aria-label="Open profile" id="profileBtn">
-  <!-- Avatar fills this, falls back to default icon if no photo -->
-  <span class="profile-btn__avatar" id="profileAvatar" aria-hidden="true"></span>
-</button>
+    <button class="icon-btn profile-btn" aria-label="Open profile" id="profileBtn">
+      <span class="profile-btn__avatar" id="profileAvatar" aria-hidden="true"></span>
+    </button>
+
+    <button class="icon-btn" aria-label="Log out" id="logoutBtn" title="Log out">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+        <polyline points="16 17 21 12 16 7"/>
+        <line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </button>
   </header>
 
   <!-- The map -->
@@ -108,9 +115,13 @@
   </div>
 </div>
 
+
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <!-- Our app code -->
+  
+  <script src="js/api.js"></script>
   <script src="js/categories.js"></script>
   <script src="js/mock-data.js"></script>
   <script src="js/home.js"></script>

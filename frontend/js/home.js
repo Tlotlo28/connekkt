@@ -3,6 +3,22 @@
 // ===========================
 // Handles the map, scan button, hold-to-expand-radius, list view, modal.
 
+// --- Auth gate: kick out anyone who isn't logged in ---
+if (!api.isLoggedIn()) {
+  window.location.href = 'login.html';
+}
+
+// Load the real user's profile in the background. Fall back to cache if offline.
+let ME = api.getCachedUser();
+api.getMe().then(u => {
+  ME = u;
+  refreshProfileAvatar();
+}).catch(err => {
+  console.warn('[Connekkt] Could not refresh user:', err.message);
+});
+
+
+
 // --- 1. Initialize the map ---
 // Default location: Pretoria CBD-ish. Eventually we'll request the user's actual location.
 const DEFAULT_CENTER = [-25.7479, 28.1879];
@@ -202,14 +218,16 @@ listViewBtn.addEventListener('click', () => {
 });
 
 // --- Profile button avatar ---
-// For now we hardcode "the logged-in user" as Modisa (id=999).
-// Once auth is wired, this will read from the session.
-const ME = getCreativeById(999);
-const profileAvatar = document.getElementById('profileAvatar');
-if (ME && ME.photos && ME.photos.length > 0) {
-  profileAvatar.style.backgroundImage = `url('${ME.photos[0]}')`;
-  profileAvatar.setAttribute('data-has-photo', 'true');
+function refreshProfileAvatar() {
+  if (!ME) return;
+  if (ME.photos && ME.photos.length > 0) {
+    profileAvatar.style.backgroundImage = `url('${ME.photos[0]}')`;
+    profileAvatar.setAttribute('data-has-photo', 'true');
+  }
 }
+
+const profileAvatar = document.getElementById('profileAvatar');
+refreshProfileAvatar();
 
 // --- Legend modal ---
 const legendBtn = document.getElementById('legendBtn');
@@ -266,10 +284,14 @@ document.getElementById('acknowledgeBtn').addEventListener('click', () => {
 
 // Profile button → open the logged-in user's profile (Modisa for now)
 document.getElementById('profileBtn').addEventListener('click', () => {
-  window.location.href = 'profile.html?id=999';
+  if (ME) window.location.href = `profile.html?id=${ME.id}`;
 });
 
 // --- 6. Filter button (UI placeholder) ---
 document.getElementById('filterBtn').addEventListener('click', () => {
   console.log('[Connekkt] Filter UI coming next round.');
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  if (confirm('Log out of Connekkt?')) api.logout();
 });

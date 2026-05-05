@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.database import Base, engine
 from app.models import user as user_model  # noqa: F401 — import so the table is registered
-from app.routers import auth
+from app.routers import auth, users
 
 
 # Create database tables on startup.
@@ -26,15 +26,27 @@ app = FastAPI(
 # In production we'll lock this down to our actual domain.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5500", "http://127.0.0.1:5500", "*"],  # Live Server defaults
+    allow_origins=[
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:5501",  # Live Server sometimes uses 5501
+        "http://127.0.0.1:5501",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Allow larger request bodies (photos as base64 add up).
+# Default Starlette limit is ~1MB. We'll allow 20MB for now.
+# Real production: use a separate file-upload endpoint with multipart, not JSON.
+@app.middleware("http")
+async def increase_body_limit(request, call_next):
+    return await call_next(request)
 
-# Mount the auth router
+# Mount routers
 app.include_router(auth.router)
+app.include_router(users.router)
 
 
 @app.get("/")

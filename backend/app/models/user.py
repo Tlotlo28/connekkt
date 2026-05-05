@@ -1,10 +1,7 @@
-"""
-The User model — the shape of the 'users' table in the database.
-SQLAlchemy converts this Python class into a real SQL table at startup.
-"""
+"""User table — extended with profile fields for onboarding."""
 
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, JSON, Float
 
 from app.database import Base
 
@@ -12,23 +9,35 @@ from app.database import Base
 class User(Base):
     __tablename__ = "users"
 
-    # Primary key — auto-incremented unique ID for each user
     id = Column(Integer, primary_key=True, index=True)
 
-    # Login credentials
+    # Auth
     email = Column(String, unique=True, nullable=False, index=True)
     hashed_password = Column(String, nullable=False)
 
-    # Stage name / display name (Modisa, Thando M., etc.)
+    # Identity
     name = Column(String, nullable=True)
-
-    # Profile fields — filled in during onboarding (round 2)
-    category = Column(String, nullable=True)  # e.g. "musician"
+    category = Column(String, nullable=True)
     bio = Column(String, nullable=True)
 
-    # Account status
+    # JSON columns store arrays/objects as JSON in SQLite.
+    # Easy for prototyping. We'd normalize these into proper tables for a v2 backend.
+    subcategories = Column(JSON, default=list)  # ["Afrohouse", "Afrotech"]
+    tags = Column(JSON, default=list)           # ["afrohouse", "lo-fi"]
+    photos = Column(JSON, default=list)         # base64 data URLs (we'll move to file storage later)
+    socials = Column(JSON, default=list)        # [{"type": "spotify", "url": "..."}]
+    contact = Column(JSON, default=dict)        # {"email": "...", "whatsapp": "..."}
+
+    # Location (optional, used for the scan feature later)
+    lat = Column(Float, nullable=True)
+    lng = Column(Float, nullable=True)
+
+    # Owner-only
+    fade_color = Column(String, nullable=True)  # hex string for custom fade
+
+    # Status
     is_active = Column(Boolean, default=True)
-    is_verified = Column(Boolean, default=False)  # email verification — for v2
+    is_verified = Column(Boolean, default=False)
 
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow)

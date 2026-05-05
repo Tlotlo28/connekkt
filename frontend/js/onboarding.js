@@ -245,12 +245,13 @@ cropConfirmBtn.addEventListener('click', () => {
   // We export at a fixed size so all profile photos are consistent
   // and we don't bloat the database with massive originals.
   const canvas = cropper.getCroppedCanvas({
-    width: 600,
-    height: 800,
-    imageSmoothingQuality: 'high'
-  });
+  width: 800,
+  height: 1066,
+  imageSmoothingQuality: 'high'
+});
 
-  const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.9); // 0.9 = 90% quality
+// 0.78 = visually nearly identical to 0.9, but ~40% fewer bytes
+const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.78);
 
   // Save to state and update the slot preview
   onboardingData.photos[activeSlotIndex] = croppedDataUrl;
@@ -359,27 +360,59 @@ addForeignBtn.addEventListener('click', () => addSocialRow());
 // Start with one empty Instagram row to nudge the user
 addSocialRow({ type: 'instagram' });
 
-// --- 9. STEP 7: FINISH ---
-document.getElementById('finishBtn').addEventListener('click', () => {
-  // For now: log everything so we can verify the data is captured correctly.
-  // Round 3 will replace this with a real fetch() call to the backend.
-  console.log('[Connekkt] Onboarding complete. Submitting:', onboardingData);
+// --- 9. STEP 7: FINISH — submits to the real backend ---
+const finishBtn = document.getElementById('finishBtn');
 
-  // Save locally so the home page knows who "I" am during this session
-  // (Real session management comes with the JWT in round 3.)
+finishBtn.addEventListener('click', async () => {
+  finishBtn.disabled = true;
+  finishBtn.textContent = 'Setting things up…';
+
   try {
-    sessionStorage.setItem('connekkt_onboarding', JSON.stringify({
-      ...onboardingData,
-      password: '[redacted]' // never log/store passwords client-side
-    }));
-  } catch (err) {
-    console.warn('SessionStorage unavailable:', err);
-  }
+    // Step 1: create the account
+    finishBtn.textContent = 'Creating account…';
+    await api.signup({
+      email: onboardingData.email,
+      password: onboardingData.password,
+      name: onboardingData.name
+    });
 
-  // Quick celebration delay, then go home
-  setTimeout(() => {
-    window.location.href = 'home.html';
-  }, 400);
+    // Step 2: save the text-only profile fields (small, fast, safe)
+    finishBtn.textContent = 'Saving your profile…';
+    await api.updateMe({
+      category: onboardingData.category,
+      subcategories: onboardingData.subcategories,
+      bio: onboardingData.bio,
+      tags: onboardingData.tags,
+      socials: onboardingData.socials.filter(s => s.url)
+    });
+
+    // Step 3: save photos in their own request (largest payload, save it last)
+    if (onboardingData.photos.length > 0) {
+      finishBtn.textContent = 'Uploading photos…';
+      await api.updateMe({ photos: onboardingData.photos });
+    }
+
+    finishBtn.textContent = 'Welcome to Connekkt!';
+    setTimeout(() => { window.location.href = 'home.html'; }, 400);
+
+  } catch (err) {
+    finishBtn.disabled = false;
+    finishBtn.textContent = 'Enter Connekkt';
+
+    if (err.status === 409) {
+      alert('That email is already registered. Redirecting to login…');
+      window.location.href = 'login.html';
+    } else {
+      // Surface the real error so we can debug instead of guessing
+      console.error('[Connekkt] Onboarding submit failed:', err);
+      alert(`Couldn't finish setting things up: ${err.message}\n\nCheck the browser console for details.`);
+    }
+  }
+});
+
+// --- 10. "I already have an account" → real login flow ---
+document.getElementById('loginBtn').addEventListener('click', () => {
+  window.location.href = 'login.html';
 });
 
 // --- 10. "I already have an account" ---

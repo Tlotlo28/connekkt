@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <title>Connekkt — Log In</title>
+  <link rel="icon" type="image/png" href="assets/connekkt-logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/onboarding.css" />
+</head>
+<body class="onboarding-body">
+
+  <main class="onboarding">
+    <section class="step is-active">
+      <img src="assets/connekkt-logo.png" alt="Connekkt" class="step__logo" />
+      <h1 class="step__title">Welcome back</h1>
+      <p class="step__sub">Log in to keep building your network.</p>
+
+      <form class="form" id="loginForm" novalidate>
+        <label class="field">
+          <span class="field__label">Email</span>
+          <input type="email" id="lEmail" placeholder="you@example.com" required autocomplete="email" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Password</span>
+          <input type="password" id="lPassword" placeholder="Your password" required autocomplete="current-password" />
+        </label>
+
+        <p class="form__error" id="loginError" hidden></p>
+
+        <div class="step__actions">
+          <button type="submit" class="btn btn--primary btn--lg btn--full" id="loginSubmitBtn">Log in</button>
+          <button type="button" class="btn btn--ghost btn--full" id="goToSignupBtn" style="margin-top: 12px;">Create an account instead</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script>
+    const form = document.getElementById('loginForm');
+    const errEl = document.getElementById('loginError');
+    const submitBtn = document.getElementById('loginSubmitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errEl.hidden = true;
+
+      const email = document.getElementById('lEmail').value.trim();
+      const password = document.getElementById('lPassword').value;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Logging in…';
+
+      try {
+        await api.login({ email, password });
+        window.location.href = 'home.html';
+      } catch (err) {
+        errEl.textContent = err.message;
+        errEl.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Log in';
+      }
+    });
+
+    document.getElementById('goToSignupBtn').addEventListener('click', () => {
+      window.location.href = 'onboarding.html';
+    });
+  </script>
+</body>
+</html>
