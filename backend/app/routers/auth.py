@@ -69,3 +69,19 @@ def login(payload: UserLogin, db: Session = Depends(get_db)):
 
     token = create_access_token(user.id)
     return TokenResponse(access_token=token, user=UserPublic.model_validate(user))
+
+@router.post("/demo", response_model=TokenResponse)
+def demo_login(db: Session = Depends(get_db)):
+    """
+    Instant demo login as Modisa (user id 1).
+    For portfolio demonstration only — do not expose in a real product.
+    """
+    demo_user = db.query(User).filter(User.id == 1).first()
+    if not demo_user:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Demo account not set up yet.",
+        )
+
+    token = create_access_token(demo_user.id)
+    return TokenResponse(access_token=token, user=UserPublic.model_validate(demo_user))

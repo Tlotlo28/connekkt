@@ -50,3 +50,21 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserPublic
+
+class LocationUpdate(BaseModel):
+    lat: float = Field(ge=-90, le=90)
+    lng: float = Field(ge=-180, le=180)
+
+
+class UserListItem(BaseModel):
+    """Compact public view used in /users responses (lighter than full profile)."""
+    id: int
+    name: str | None = None
+    category: str | None = None
+    photos: list = []
+    tags: list = []
+    lat: float | None = None
+    lng: float | None = None
+    distance_km: float | None = None  # only set when querying by location
+
+    model_config = {"from_attributes": True}
