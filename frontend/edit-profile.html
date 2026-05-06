@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0A0A0F" />
+  <title>Connekkt — Edit profile</title>
+  <link rel="icon" type="image/png" href="assets/connekkt-logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/onboarding.css" />
+</head>
+<body class="onboarding-body">
+
+  <button class="back-btn" id="backBtn" aria-label="Go back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 18l-6-6 6-6"/>
+    </svg>
+  </button>
+
+  <main class="onboarding">
+    <section class="step is-active">
+      <h1 class="step__title">Edit profile</h1>
+      <p class="step__sub">Tweak anything. Hit save when you're done.</p>
+
+      <form class="form" id="editForm" novalidate>
+        <label class="field">
+          <span class="field__label">Stage name / display name</span>
+          <input type="text" id="eName" maxlength="40" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Bio</span>
+          <textarea id="eBio" rows="4" maxlength="240"></textarea>
+          <span class="field__hint" id="bioCount">0 / 240</span>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Creative DNA tags (Enter to add)</span>
+          <input type="text" id="eDnaInput" placeholder="words that describe your style..." maxlength="20" />
+          <div class="dna-input-tags" id="dnaInputTags"></div>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Contact info (visible to other creatives)</span>
+          <input type="email" id="eContactEmail" placeholder="Email (optional)" />
+          <input type="text" id="eContactWhatsapp" placeholder="WhatsApp (e.g. +27 71 234 5678)" style="margin-top:8px;" />
+          <textarea id="eContactNote" rows="2" maxlength="160" placeholder="A short note: 'DM me on Insta first' etc." style="margin-top:8px;"></textarea>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Social links</span>
+          <div class="socials-list" id="socialsList"></div>
+          <button class="btn btn--ghost btn--full" id="addSocialBtn" type="button" style="margin-top:12px;">+ Add link</button>
+        </label>
+
+        <p class="form__error" id="editError" hidden></p>
+
+        <div class="step__actions step__actions--row">
+          <button type="button" class="btn btn--ghost" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn--primary btn--full" id="saveBtn">Save changes</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/categories.js"></script>
+  <script src="js/edit-profile.js"></script>
+</body>
+</html>

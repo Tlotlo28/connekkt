@@ -67,11 +67,12 @@ signupForm.addEventListener('submit', (e) => {
   const name = document.getElementById('fName').value.trim();
   const email = document.getElementById('fEmail').value.trim();
   const password = document.getElementById('fPassword').value;
+  const passwordConfirm = document.getElementById('fPasswordConfirm').value;
 
-  // Basic frontend validation. Backend will validate too — never trust the frontend alone.
-  if (name.length < 2)   return showError('Please enter your name.');
-  if (!email.includes('@')) return showError('Please enter a valid email.');
-  if (password.length < 8)  return showError('Password must be at least 8 characters.');
+  if (name.length < 2)         return showError('Please enter your name.');
+  if (!email.includes('@'))    return showError('Please enter a valid email.');
+  if (password.length < 8)     return showError('Password must be at least 8 characters.');
+  if (password !== passwordConfirm) return showError("Passwords don't match.");
 
   onboardingData.name = name;
   onboardingData.email = email;
@@ -79,6 +80,7 @@ signupForm.addEventListener('submit', (e) => {
 
   nextStep();
 });
+
 
 function showError(msg) {
   signupError.textContent = msg;
@@ -126,8 +128,20 @@ function renderSubcategories() {
     <div class="chip" data-sc="${sc}" style="--chip-color: ${cat.colorHex};">${sc}</div>
   `).join('');
 
-  // Reset selections when re-rendering
   onboardingData.subcategories = [];
+
+  // Field-aware DNA placeholder
+  const dnaPlaceholders = {
+    designer:     'minimalist, brutalist, retro...',
+    photographer: 'street, portrait, golden hour...',
+    videographer: 'cinematic, music videos, lo-fi...',
+    musician:     'afrohouse, lo-fi, jazz...',
+    uiux:         'mobile-first, design systems...',
+    marketer:     'growth, brand, social...',
+    writer:       'editorial, copy, brand voice...'
+  };
+  const dnaInput = document.getElementById('fDnaInput');
+  if (dnaInput) dnaInput.placeholder = dnaPlaceholders[onboardingData.category] || 'words that describe your style...';
 }
 
 subcatGrid.addEventListener('click', (e) => {
@@ -303,14 +317,23 @@ document.querySelectorAll('.photo-slot__input').forEach(input => {
 
 // --- 8. STEP 6: SOCIALS ---
 const SOCIAL_TYPES = [
-  { key: 'instagram',  label: 'Instagram' },
-  { key: 'spotify',    label: 'Spotify' },
-  { key: 'soundcloud', label: 'SoundCloud' },
-  { key: 'behance',    label: 'Behance' },
-  { key: 'pinterest',  label: 'Pinterest' },
-  { key: 'twitter',    label: 'Twitter / X' },
-  { key: 'tiktok',     label: 'TikTok' },
-  { key: 'foreign',    label: 'Other (custom link)' }
+  { key: 'instagram',   label: 'Instagram' },
+  { key: 'tiktok',      label: 'TikTok' },
+  { key: 'youtube',     label: 'YouTube' },
+  { key: 'spotify',     label: 'Spotify' },
+  { key: 'apple_music', label: 'Apple Music' },
+  { key: 'soundcloud',  label: 'SoundCloud' },
+  { key: 'tidal',       label: 'Tidal' },
+  { key: 'bandcamp',    label: 'Bandcamp' },
+  { key: 'behance',     label: 'Behance' },
+  { key: 'dribbble',    label: 'Dribbble' },
+  { key: 'pinterest',   label: 'Pinterest' },
+  { key: 'twitter',     label: 'Twitter / X' },
+  { key: 'linkedin',    label: 'LinkedIn' },
+  { key: 'github',      label: 'GitHub' },
+  { key: 'vimeo',       label: 'Vimeo' },
+  { key: 'website',     label: 'Personal website' },
+  { key: 'foreign',     label: 'Other (custom link)' }
 ];
 
 const socialsList = document.getElementById('socialsList');
@@ -367,35 +390,52 @@ finishBtn.addEventListener('click', async () => {
   finishBtn.disabled = true;
   finishBtn.textContent = 'Setting things up…';
 
+  console.log('[onboarding] STEP 0: clicked. onboardingData =', JSON.parse(JSON.stringify({
+    ...onboardingData,
+    password: '[hidden]',
+    photos: `${onboardingData.photos.length} photos`
+  })));
+
   try {
-    // Step 1: create the account
+    console.log('[onboarding] STEP 1: signing up...');
     finishBtn.textContent = 'Creating account…';
-    await api.signup({
+    const signupResult = await api.signup({
       email: onboardingData.email,
       password: onboardingData.password,
       name: onboardingData.name
     });
+    console.log('[onboarding] STEP 1 done. user id =', signupResult.id);
 
-    // Step 2: save the text-only profile fields (small, fast, safe)
+    console.log('[onboarding] STEP 2: saving profile fields...');
     finishBtn.textContent = 'Saving your profile…';
-    await api.updateMe({
+    const profilePayload = {
       category: onboardingData.category,
       subcategories: onboardingData.subcategories,
       bio: onboardingData.bio,
       tags: onboardingData.tags,
       socials: onboardingData.socials.filter(s => s.url)
-    });
+    };
+    console.log('[onboarding] STEP 2 payload:', profilePayload);
+    const updateResult = await api.updateMe(profilePayload);
+    console.log('[onboarding] STEP 2 done. backend says category =', updateResult.category);
 
-    // Step 3: save photos in their own request (largest payload, save it last)
     if (onboardingData.photos.length > 0) {
+      console.log('[onboarding] STEP 3: uploading', onboardingData.photos.length, 'photos...');
       finishBtn.textContent = 'Uploading photos…';
-      await api.updateMe({ photos: onboardingData.photos });
+      const photoResult = await api.updateMe({ photos: onboardingData.photos });
+      console.log('[onboarding] STEP 3 done. backend says photos =', photoResult.photos.length);
+    } else {
+      console.log('[onboarding] STEP 3 skipped — no photos.');
     }
 
+    console.log('[onboarding] ALL DONE. Redirecting to home.');
     finishBtn.textContent = 'Welcome to Connekkt!';
     setTimeout(() => { window.location.href = 'home.html'; }, 400);
 
   } catch (err) {
+    console.error('[onboarding] FAILED:', err);
+    console.error('[onboarding] error.status =', err.status);
+    console.error('[onboarding] error.message =', err.message);
     finishBtn.disabled = false;
     finishBtn.textContent = 'Enter Connekkt';
 
@@ -403,9 +443,7 @@ finishBtn.addEventListener('click', async () => {
       alert('That email is already registered. Redirecting to login…');
       window.location.href = 'login.html';
     } else {
-      // Surface the real error so we can debug instead of guessing
-      console.error('[Connekkt] Onboarding submit failed:', err);
-      alert(`Couldn't finish setting things up: ${err.message}\n\nCheck the browser console for details.`);
+      alert(`Couldn't finish: ${err.message}\n\nCheck console.`);
     }
   }
 });
@@ -415,11 +453,31 @@ document.getElementById('loginBtn').addEventListener('click', () => {
   window.location.href = 'login.html';
 });
 
-// --- 10. "I already have an account" ---
+// --- 10. Welcome screen buttons ---
+const demoLoginBtn = document.getElementById('demoLoginBtn');
+const demoStatus = document.getElementById('demoStatus');
+
+if (demoLoginBtn) {
+  demoLoginBtn.addEventListener('click', async () => {
+    demoLoginBtn.disabled = true;
+    demoLoginBtn.textContent = 'Loading demo…';
+    demoStatus.textContent = 'Spinning up the demo account…';
+
+    try {
+      await api.demoLogin();
+      demoStatus.textContent = 'Welcome in.';
+      setTimeout(() => { window.location.href = 'home.html'; }, 300);
+    } catch (err) {
+      console.error('[demo] failed:', err);
+      demoLoginBtn.disabled = false;
+      demoLoginBtn.textContent = 'Try the demo →';
+      demoStatus.textContent = 'Demo unavailable right now. Try signing up instead.';
+    }
+  });
+}
+
 document.getElementById('loginBtn').addEventListener('click', () => {
-  // Login flow comes in round 3. For now just skip to home.
-  console.log('[Connekkt] Login flow — coming in round 3.');
-  window.location.href = 'home.html';
+  window.location.href = 'login.html';
 });
 
 // --- KICK OFF ---

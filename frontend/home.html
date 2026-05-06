@@ -115,15 +115,27 @@
   </div>
 </div>
 
+<!-- Filter modal -->
+<div class="modal" id="filterModal" aria-hidden="true" role="dialog">
+  <div class="modal__backdrop" data-close-modal></div>
+  <div class="modal__panel modal__panel--wide">
+    <h3 class="modal__title">Show me</h3>
+    <p class="modal__subtitle">Filter the map by creative field.</p>
+    <div class="legend-grid" id="filterGrid"></div>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="clearFilterBtn">Show all</button>
+      <button class="btn btn--primary" data-close-modal>Done</button>
+    </div>
+  </div>
+</div>
 
 
   <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- Our app code -->
   
-  <script src="js/api.js"></script>
-  <script src="js/categories.js"></script>
-  <script src="js/mock-data.js"></script>
-  <script src="js/home.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/api.js"></script>
+<script src="js/categories.js"></script>
+<script src="js/home.js"></script>
+  <!--<script src="js/mock-data.js"></script>-->
 </body>
 </html>

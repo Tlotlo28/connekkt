@@ -623,3 +623,36 @@ a.contact-row:hover {
   font-size: 0.9rem;
   line-height: 1.5;
 }
+
+/* Profile top-bar buttons — translucent over photos */
+.profile__top-bar .icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(15, 15, 22, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-smooth);
+}
+
+.profile__top-bar .icon-btn:hover {
+  background: rgba(15, 15, 22, 0.7);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: scale(1.05);
+}
+
+.profile__top-bar .icon-btn:active {
+  transform: scale(0.95);
+}
+
+.profile__top-bar .icon-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}

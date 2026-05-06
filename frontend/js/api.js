@@ -102,6 +102,12 @@ const api = {
     auth.setCachedUser(data.user);
     return data.user;
   },
+    async demoLogin() {
+        const data = await request('/auth/demo', { method: 'POST' });
+        auth.setToken(data.access_token);
+        auth.setCachedUser(data.user);
+        return data.user;
+    },
 
   logout() {
     auth.clear();
@@ -125,6 +131,32 @@ const api = {
     return user;
   },
 
+  // --- Discovery ---
+  async listUsers({ category = null, lat = null, lng = null, radiusKm = 50, limit = 50 } = {}) {
+    const params = new URLSearchParams();
+    if (category) params.set('category', category);
+    if (lat !== null && lng !== null) {
+      params.set('lat', lat);
+      params.set('lng', lng);
+      params.set('radius_km', radiusKm);
+    }
+    params.set('limit', limit);
+    return await request(`/users?${params.toString()}`, { requireAuth: true });
+  },
+
+  async getUser(id) {
+    return await request(`/users/${id}`, { requireAuth: true });
+  },
+
+  async updateMyLocation({ lat, lng }) {
+    const user = await request('/users/me/location', {
+      method: 'PATCH',
+      body: { lat, lng },
+      requireAuth: true
+    });
+    auth.setCachedUser(user);
+    return user;
+  },
   // --- Helpers ---
   isLoggedIn() { return auth.isLoggedIn(); },
   getCachedUser() { return auth.getCachedUser(); },

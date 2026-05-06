@@ -30,15 +30,23 @@
   <main class="onboarding">
 
     <!-- ===== STEP 0: WELCOME ===== -->
-    <section class="step is-active" data-step="welcome">
-      <img src="assets/connekkt-logo.png" alt="Connekkt" class="step__logo" />
-      <h1 class="step__title">Welcome to Connekkt</h1>
-      <p class="step__sub">A space for creatives to find each other, vibe, and build together. Connekkt the dots.</p>
-      <div class="step__actions step__actions--stack">
-        <button class="btn btn--primary btn--lg" data-go-next>Get started</button>
-        <button class="btn btn--ghost" id="loginBtn">I already have an account</button>
-      </div>
-    </section>
+<section class="step is-active" data-step="welcome">
+  <img src="assets/connekkt-logo.png" alt="Connekkt" class="step__logo" />
+  <h1 class="step__title">Welcome to Connekkt</h1>
+  <p class="step__sub">A space for creatives to find each other, vibe, and build together. Connekkt the dots.</p>
+
+  <div class="step__actions step__actions--stack">
+    <button class="btn btn--primary btn--lg" id="demoLoginBtn">Try the demo →</button>
+    <p class="welcome-hint" id="demoStatus">No signup needed. Land in the app instantly.</p>
+  </div>
+
+  <div class="welcome-divider"><span>or</span></div>
+
+  <div class="welcome-secondary">
+    <button class="btn btn--ghost btn--sm" data-go-next>Create an account</button>
+    <button class="btn btn--ghost btn--sm" id="loginBtn">Log in</button>
+  </div>
+</section>
 
     <!-- ===== STEP 1: SIGN UP ===== -->
     <section class="step" data-step="signup">
@@ -59,6 +67,11 @@
         <label class="field">
           <span class="field__label">Password</span>
           <input type="password" id="fPassword" placeholder="At least 8 characters" required minlength="8" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">Confirm password</span>
+          <input type="password" id="fPasswordConfirm" placeholder="Type it again" required minlength="8" autocomplete="new-password" />
         </label>
 
         <p class="form__error" id="signupError" hidden></p>
@@ -107,7 +120,7 @@
 
       <label class="field">
         <span class="field__label">Creative DNA — type a tag and hit Enter</span>
-        <input type="text" id="fDnaInput" placeholder="afrohouse, lo-fi, minimalist..." maxlength="20" />
+        <input type="text" id="fDnaInput" placeholder="words that describe your style..." maxlength="20" />
         <div class="dna-input-tags" id="dnaInputTags"></div>
       </label>
 
