@@ -3,7 +3,10 @@
 // One module. Every fetch call to the backend goes through here.
 // ===========================
 
-const API_BASE = 'http://localhost:8000';
+// Auto-detect: localhost during dev, production URL when deployed
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://connekkt-api.onrender.com';
 
 // We'll store the JWT in localStorage. Survives page refresh, browser close, etc.
 // (For production-grade security, httpOnly cookies are stronger — but for a portfolio
