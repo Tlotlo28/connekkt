@@ -17,8 +17,26 @@ Base.metadata.create_all(bind=engine)
 # Photos are from Unsplash's free API — already 3:4 portrait, no licensing issues.
 DEMO_USERS = [
     {
-        "email": "naledi@demo.connekkt",
-        "name": "Naledi M.",
+        "email": "tlotlomasisi66@gmail.com",   # ← your real email so demo-login finds id 1
+        "name": "Modisa",
+        "category": "musician",
+        "subcategories": ["Afrohouse", "Afrotech", "DJ"],
+        "bio": "Afrohouse & Afrotech producer rooted in Pretoria. Building dancefloors one groove at a time — open to vocalists, visual artists, and live performance collabs.",
+        "tags": ["afrohouse", "afrotech", "producer", "dj"],
+        "photos": [],   # we'll fill these in after first deploy
+        "socials": [
+            {"type": "spotify",     "url": "https://open.spotify.com/artist/2O0fopkATrQcBkRmYasrNW?si=LPk1iz6ESMqVdG4-cttOsw"},
+            {"type": "apple_music", "url": "https://music.apple.com/us/artist/modisa/1541279621"},
+            {"type": "youtube",     "url": "https://www.youtube.com/@modisatm4867"},
+            {"type": "instagram",   "url": "https://www.instagram.com/modisa.tm/?hl=en"},
+        ],
+        "contact": {"email": "tlotlomasisi66@gmail.com"},
+        "lat": -25.7479, "lng": 28.1879,
+    },
+    # ... existing 5 demo users below stay the same
+    {
+        "email": "naomi@demo.connekkt",
+        "name": "Naomi M.",
         "category": "photographer",
         "subcategories": ["Portrait", "Street", "Fashion"],
         "bio": "Portrait + street work, Pretoria-based. Always chasing that golden hour. Down to collab on editorials and music shoots.",
@@ -31,7 +49,7 @@ DEMO_USERS = [
             {"type": "instagram", "url": "https://instagram.com/naledi_demo"},
             {"type": "behance", "url": "https://behance.net/naledi"},
         ],
-        "contact": {"email": "naledi@demo.connekkt", "note": "DM on Instagram first — I check it daily."},
+        "contact": {"email": "naomi@demo.connekkt", "note": "DM on Instagram first — I check it daily."},
         "lat": -25.7510, "lng": 28.1925,
     },
     {
@@ -73,8 +91,8 @@ DEMO_USERS = [
         "lat": -25.7398, "lng": 28.1995,
     },
     {
-        "email": "sipho@demo.connekkt",
-        "name": "Sipho N.",
+        "email": "simon@demo.connekkt",
+        "name": "Simon N.",
         "category": "musician",
         "subcategories": ["Amapiano", "Jazz", "DJ"],
         "bio": "Producer + DJ. Amapiano roots, jazz heart. Open to collabs with vocalists, instrumentalists, and visual artists who get the vibe.",
@@ -88,7 +106,7 @@ DEMO_USERS = [
             {"type": "soundcloud", "url": "https://soundcloud.com/sipho_demo"},
             {"type": "instagram", "url": "https://instagram.com/sipho_demo"},
         ],
-        "contact": {"email": "sipho@demo.connekkt"},
+        "contact": {"email": "simon@demo.connekkt"},
         "lat": -25.7560, "lng": 28.1845,
     },
     {

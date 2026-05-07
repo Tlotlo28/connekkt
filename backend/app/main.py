@@ -1,7 +1,7 @@
 """
 FastAPI app entry point. This is what uvicorn runs.
 """
-
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -22,16 +22,17 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# CORS — allows our frontend (which runs on a different port) to call this API.
-# In production we'll lock this down to our actual domain.
+
+
+# CORS — locks down who can call this API
+allowed_origins = os.environ.get(
+    "CONNEKKT_ALLOWED_ORIGINS",
+    "http://localhost:5500,http://127.0.0.1:5500,http://localhost:5501,http://127.0.0.1:5501"
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-        "http://localhost:5501",  # Live Server sometimes uses 5501
-        "http://127.0.0.1:5501",
-    ],
+    allow_origins=[o.strip() for o in allowed_origins],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
