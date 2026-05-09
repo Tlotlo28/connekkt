@@ -23,7 +23,11 @@ DEMO_USERS = [
         "subcategories": ["Afrohouse", "Afrotech", "DJ"],
         "bio": "Afrohouse & Afrotech producer rooted in Pretoria. Building dancefloors one groove at a time — open to vocalists, visual artists, and live performance collabs.",
         "tags": ["afrohouse", "afrotech", "producer", "dj"],
-        "photos": [],   # we'll fill these in after first deploy
+        "photos": [
+            "https://connekkt.pages.dev/assets/img1.jpg",
+            "https://connekkt.pages.dev/assets/img2.jpg",
+            "https://connekkt.pages.dev/assets/img3.jpg",
+        ],   # we'll fill these in after first deploy
         "socials": [
             {"type": "spotify",     "url": "https://open.spotify.com/artist/2O0fopkATrQcBkRmYasrNW?si=LPk1iz6ESMqVdG4-cttOsw"},
             {"type": "apple_music", "url": "https://music.apple.com/us/artist/modisa/1541279621"},
